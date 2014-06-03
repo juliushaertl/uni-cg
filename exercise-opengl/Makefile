@@ -2,12 +2,12 @@ CC = g++
 CFLAGS = -Wall
 DEPS = 
 LDFLAGS = -lGL -lGLU -lglut -lGLEW
+BUILDDIR = build/
 
 all: demo1
 
 demo1:
-	$(CC) $@.cpp -o $@ $(LDFLAGS)
+	$(CC) $@.cpp -o $(BUILDDIR)$@ $(LDFLAGS)
 
 clean:
-	rm demo1
-	rm *.o
+	rm $(BUILDDIR)demo1
