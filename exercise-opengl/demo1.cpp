@@ -10,8 +10,10 @@
 #include <iostream>
 // ID to adress vertex array object when drawing it
 unsigned int vertexArrayObjID;
+unsigned int vertexRedObjID;
 // Number of vertices in our example
 const int numVerts = 3;
+const int numVertsRect = 4;
 
 void createGeometry()
 {
@@ -44,7 +46,8 @@ void createGeometry()
                            0 /*initialOffsetPointer*/ );
     // Activate the attribute
     glEnableVertexAttribArray( 0 );
-// Vertex buffer object for color data
+
+    // Vertex buffer object for color data
     unsigned int vertexBufferObjID_1;
     // Generates name for the data of the buffer holding color values
     glGenBuffers(1, &vertexBufferObjID_1);
@@ -64,6 +67,63 @@ void createGeometry()
     // Activate the attribute
     glEnableVertexAttribArray(1);
 
+    /* CREATE SECOND TRIANGLE */
+    // generate vertex array object name
+    glGenVertexArrays( 1, &vertexRedObjID );
+    // bind ("make current") a vertex array object
+    // which stores the state set below (e.g. vertices, color)
+    glBindVertexArray( vertexRedObjID );
+ 
+    // Vertex buffer object for vertex data
+    unsigned int vertexBufferObjID_2;
+    // Generates name for the data of the vertex buffer
+    glGenBuffers( 1, &vertexBufferObjID_2 );
+    // Bind ("make current") the vertex buffer
+    glBindBuffer( GL_ARRAY_BUFFER, vertexBufferObjID_2 );
+    // The vertex coordinates
+    GLfloat vertices2[] = {  0.0f, 0.0f, 0.0f,
+                            1.0f, 0.0f, 0.0f,
+                            1.0f, -1.0f, 0.0f,
+                            0.0f, -1.0f, 0.0f
+    };
+    // Components (floats) per vertex position
+    const int numVertComps2 = 3;
+    // Creates and initializes a buffer object's data store
+    // vwith the vertex coordinates data
+    glBufferData( GL_ARRAY_BUFFER, 
+                  numVertComps2*numVertsRect*sizeof(GLfloat),
+                  vertices2, GL_STATIC_DRAW );
+    // Define the attribute which will be used to 
+    // access the data on the GPU
+    glVertexAttribPointer( (GLuint)0, numVertComps2, GL_FLOAT, 
+                           GL_FALSE, 0, 0);
+    /*stride,
+                           0 initialOffsetPointer*/ //);
+    // Activate the attribute
+    glEnableVertexAttribArray( 0 );
+    
+    // Vertex buffer object for color data
+    unsigned int vertexBufferObjID_3;
+    // Generates name for the data of the buffer holding color values
+    glGenBuffers(1, &vertexBufferObjID_3);
+    // Bind ("make current") the buffer for the color
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObjID_3);
+    // The color values
+    GLfloat colors2[] = { 1.0f, 0.0f, 0.0f,
+                          1.0f, 0.0f, 0.0f,
+                          1.0f, 0.0f, 0.0f,
+                          1.0f, 0.0f, 0.0f
+    };
+    // Components (floats) per color value
+    const int numColComps3 = 3;
+    // Creates and initializes the current buffer object's data store with the color data
+    glBufferData(GL_ARRAY_BUFFER, numColComps3*numVertsRect*sizeof(GLfloat), colors2, GL_STATIC_DRAW);
+    // Define the attribute which will be used to access the data on the GPU
+    glVertexAttribPointer((GLuint)1, numColComps3, GL_FLOAT, 
+                          GL_FALSE, 0 /*stride*/, 0 /*initialOffsetPointer*/);
+    // Activate the attribute
+    glEnableVertexAttribArray(1);
+
 
 
     // break the existing vertex array object binding.
@@ -71,14 +131,18 @@ void createGeometry()
 } // end of createGeometry function
 
 
+
 void display(void)
 {
     // clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
-    // activate the vertex array object set above
+
     glBindVertexArray(vertexArrayObjID);
-    // draw the vertex array from the activated vertex array object
     glDrawArrays(GL_TRIANGLES, 0, numVerts);
+
+    glBindVertexArray(vertexRedObjID);
+    glDrawArrays(GL_QUADS, 0, numVertsRect);
+
     // show the drawn geometry on the screen
     glutSwapBuffers();
 }
